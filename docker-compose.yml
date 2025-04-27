@@ -1,0 +1,56 @@
+services:
+  # Backend (Ruby on Rails)
+  backend:
+    build: ./productos_backend
+    ports:
+      - "3000:3000"  # Puerto de Rails
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/productos_backend_development
+    depends_on:
+      - db
+    volumes:
+      - ./productos_backend:/app
+      - bundle_data:/usr/local/bundle  # Cache de gems
+
+  # Frontend (React con Vite)
+  frontend:
+    build: ./productos_frontend
+    ports:
+      - "5173:5173"  # Puerto de Vite
+    environment:
+      - VITE_API_URL=http://backend:3000  # URL del backend
+    depends_on:
+      - backend
+    volumes:
+      - ./productos_frontend:/app
+      - node_modules:/app/node_modules  # Cache de node
+
+  # Base de datos PostgreSQL
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=productos_backend_development
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persistencia de datos
+
+  # Servidor Jenkins (para CI/CD)
+  jenkins:
+    image: jenkins/jenkins:lts
+    ports:
+      - "8080:8080"  # Interfaz web
+      - "50000:50000"  # Comunicación con agentes
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock  # Permite a Jenkins usar Docker
+    user: root  # Evita problemas de permisos
+    depends_on:
+      - backend
+      - frontend
+
+# Volúmenes para persistencia de datos
+volumes:
+  postgres_data:
+  jenkins_home:
+  bundle_data:
+  node_modules:

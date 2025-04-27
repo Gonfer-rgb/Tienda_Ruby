@@ -1,0 +1,17 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: postgres  # Usuario por defecto de PostgreSQL
+  password: Firestone01  # La misma que configuraste al instalar PostgreSQL
+  host: localhost
+  port: 5432  # Puerto por defecto de PostgreSQL
+
+development:
+  <<: *default
+  database: productos_backend_development  # Base de datos para desarrollo
+
+test:
+  <<: *default
+  database: productos_backend_test  # Base de datos para pruebas
+

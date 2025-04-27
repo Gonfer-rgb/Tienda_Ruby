@@ -38,14 +38,12 @@ pipeline {
         }
     }
 
-    post {
+    post  {
+        success {
+            echo '✅ Pipeline ejecutado con éxito!'
+        }
         failure {
             echo '❌ Pipeline falló - Revisar logs'
-            slackSend channel: '#notificaciones', 
-                     message: "Falló el pipeline: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
-        }
-        success {
-            echo '🎉 ¡Pipeline ejecutado con éxito!'
         }
     }
 }

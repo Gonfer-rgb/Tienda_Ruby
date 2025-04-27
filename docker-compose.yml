@@ -34,19 +34,19 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data  # Persistencia de datos
 
-  # Servidor Jenkins (para CI/CD)
+
   jenkins:
     image: jenkins/jenkins:lts
     ports:
-      - "8080:8080"  # Interfaz web
-      - "50000:50000"  # Comunicación con agentes
+      - "8080:8080"  
+      - "50000:50000" 
     volumes:
       - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock  # Permite a Jenkins usar Docker
-    user: root  # Evita problemas de permisos
-    depends_on:
-      - backend
-      - frontend
+      - /var/run/docker.sock:/var/run/docker.sock  #Le permitimos a Jenkins usar Docker
+      - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
+    user: root  # Evitamos problemas de permisos y accedemos sin problemas
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
 
 # Volúmenes para persistencia de datos
 volumes:

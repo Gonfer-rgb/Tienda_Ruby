@@ -30,7 +30,8 @@ pipeline {
 
         stage('Desplegar') {
             steps {
-                sh 'docker-compose up -d'
+                sh 'docker-compose down --remove-orphans || true'
+                sh 'docker-compose up -d --force-recreate'
                 echo '🚀 Aplicación desplegada en:'
                 echo '• Backend: http://localhost:3000'
                 echo '• Frontend: http://localhost:5173'

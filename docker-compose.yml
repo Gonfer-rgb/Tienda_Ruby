@@ -11,19 +11,21 @@ services:
     volumes:
       - ./productos_backend:/app
       - bundle_data:/usr/local/bundle  # Cache de gems
+      - /app/tmp/pids 
 
   # Frontend (React con Vite)
   frontend:
     build: ./productos_frontend
     ports:
-      - "5173:5173"  # Puerto de Vite
+      - "5173:5173"
     environment:
-      - VITE_API_URL=http://backend:3000  # URL del backend
-    depends_on:
-      - backend
+      - VITE_API_URL=http://backend:3000
+      - NODE_ENV=development  # Añade esto
     volumes:
-      - ./productos_frontend:/app
-      - node_modules:/app/node_modules  # Cache de node
+      - ./productos_frontend/src:/app/src  # Solo monta el código
+      - ./productos_frontend/public:/app/public
+      - /app/node_modules  # Elimina el volumen persistente de node_modules
+
 
   # Base de datos PostgreSQL
   db:
@@ -36,17 +38,16 @@ services:
 
 
   jenkins:
-    image: jenkins/jenkins:lts
+    build:
+      context: ./  # Ruta actual (donde está el Dockerfile-jenkins)
+      dockerfile: Dockerfile-jenkins
+    user: root
     ports:
-      - "8080:8080"  
-      - "50000:50000" 
+      - "8080:8080"
+      - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock  #Le permitimos a Jenkins usar Docker
-      - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
-    user: root  # Evitamos problemas de permisos y accedemos sin problemas
-    environment:
-      - DOCKER_HOST=unix:///var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock
 
 # Volúmenes para persistencia de datos
 volumes:

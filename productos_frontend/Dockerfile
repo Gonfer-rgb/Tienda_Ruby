@@ -1,20 +1,19 @@
-# Usa una imagen oficial de Node.js
 FROM node:18
 
-# Crea el directorio de trabajo
 WORKDIR /app
 
-# Copia los archivos de dependencias
-COPY package.json ./
+# Limpia la caché de npm y fuerza la instalación
+RUN npm cache clean --force
 
-# Instala dependencias
-RUN npm install
+# Copia archivos de dependencias
+COPY package.json package-lock.json ./
 
-# Copia el resto del proyecto
+# Instala dependencias con versión exacta de esbuild
+RUN npm install --force && \
+    npm install esbuild@0.25.3 --save-dev --save-exact
+
+# Copia el resto de los archivos
 COPY . .
 
-# Expone el puerto 5173 (puerto de Vite)
 EXPOSE 5173
-
-# Comando para iniciar la aplicación
 CMD ["npm", "run", "dev"]

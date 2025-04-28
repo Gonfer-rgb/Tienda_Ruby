@@ -1,20 +1,15 @@
-# Usa una imagen oficial de Ruby
 FROM ruby:3.2.2
 
-# Crea el directorio de trabajo
-WORKDIR /app
-
-# Copia los archivos de dependencias
-COPY Gemfile Gemfile.lock ./
-
 # Instala dependencias
-RUN bundle install
+RUN apt-get update && apt-get install -y postgresql-client
 
-# Copia el resto del proyecto
+WORKDIR /app
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
 COPY . .
 
-# Expone el puerto 3000 (puerto de Rails)
-EXPOSE 3000
+# Añade esta línea para limpiar posibles archivos PID existentes
+RUN rm -f /app/tmp/pids/server.pid
 
-# Comando para iniciar la aplicación
+EXPOSE 3000
 CMD ["rails", "server", "-b", "0.0.0.0"]

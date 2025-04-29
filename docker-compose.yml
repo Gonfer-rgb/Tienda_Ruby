@@ -11,13 +11,14 @@ services:
     volumes:
       - ./productos_backend:/app
       - bundle_data:/usr/local/bundle  # Cache de gems
-      - /app/tmp/pids 
+      
 
   # Frontend (React con Vite)
   frontend:
     build: ./productos_frontend
     ports:
       - "5173:5173"
+      - "5174:5173"
     environment:
       - VITE_API_URL=http://backend:3000
       - NODE_ENV=development  # Añade esto
@@ -43,7 +44,7 @@ services:
       dockerfile: Dockerfile-jenkins
     user: root
     ports:
-      - "8081:8080"
+      - "8080:8080"
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home

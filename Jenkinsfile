@@ -30,11 +30,15 @@ pipeline {
 
         stage('Desplegar') {
             steps {
-                sh 'docker-compose down --remove-orphans || true'
-                sh 'docker-compose up -d --force-recreate'
+        // Limpiar todo completamente
+                sh 'docker-compose down --remove-orphans --volumes --timeout 30 || true'
+        
+        // Forzar recreación con nombre de proyecto único
+                sh 'docker-compose -p tienda_${BUILD_NUMBER} up -d --force-recreate'
+        
                 echo '🚀 Aplicación desplegada en:'
+                echo '• Frontend: http://localhost:5174'  // Actualizado al nuevo puerto
                 echo '• Backend: http://localhost:3000'
-                echo '• Frontend: http://localhost:5173'
             }
         }
     }

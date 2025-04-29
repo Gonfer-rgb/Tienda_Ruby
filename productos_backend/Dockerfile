@@ -12,4 +12,4 @@ COPY . .
 RUN rm -f /app/tmp/pids/server.pid
 
 EXPOSE 3000
-CMD ["rails", "server", "-b", "0.0.0.0"]
+CMD ["sh", "-c", "rm -f /app/tmp/pids/server.pid && rails server -b 0.0.0.0"]
